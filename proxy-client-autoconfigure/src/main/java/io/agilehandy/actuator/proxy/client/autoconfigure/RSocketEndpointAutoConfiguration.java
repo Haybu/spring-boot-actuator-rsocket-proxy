@@ -104,7 +104,7 @@ public class RSocketEndpointAutoConfiguration {
 		RSocketEndpointMessageHandler messageHandler = new RSocketEndpointMessageHandler(discoverer);
 		messageHandler.setRSocketStrategies(rSocketStrategies.getIfAvailable());
 		customizers.orderedStream().forEach((customizer) -> customizer.customize(messageHandler));
-		messageHandler.setHandlers();
+		//messageHandler.setHandlers();
 		return messageHandler;
 	}
 

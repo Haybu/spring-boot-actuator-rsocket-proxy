@@ -21,10 +21,12 @@ import io.agilehandy.actuator.rsocket.endpoint.ExposableRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointsSupplier;
 import org.springframework.messaging.handler.CompositeMessageCondition;
 import org.springframework.messaging.handler.DestinationPatternsMessageCondition;
+import org.springframework.messaging.handler.HandlerMethod;
 import org.springframework.messaging.handler.MessageCondition;
 import org.springframework.messaging.rsocket.annotation.support.RSocketFrameTypeMessageCondition;
 import org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 		this.setHandlerPredicate(null);
 	}
 
+	@PostConstruct
 	public void setHandlers() {
 		Collection<ExposableRSocketEndpoint> endpoints = supplier.getEndpoints();
 		for (ExposableRSocketEndpoint endpoint: endpoints) {
@@ -56,22 +59,15 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 		}
 
 		this.setHandlerPredicate(null); // disable auto-detection
-	}
 
-/*	public void setHandlers() {
-		List<DiscoveredRSocketOperation> operations =
-				supplier.getEndpoints().stream()
-						.flatMap(endpoint -> endpoint.getOperations().stream().map(op -> ((DiscoveredRSocketOperation) op)))
-						.collect(Collectors.toList());
-		detectEndpointHandlerMethods(operations);
-		this.setHandlerPredicate(null); // disable auto-detection
-	}*/
+		printMappings();
+	}
 
 	protected final void detectEndpointHandlerMethods(Object bean, List<DiscoveredRSocketOperation> operations) {
 		Map<Method, CompositeMessageCondition> methods = new HashMap<>();
 		operations.stream()
 				.forEach(op -> methods.put(op.getOperationMethod().getMethod(), this.getMappingForEndPointMethod(op)));
-		methods.forEach((key, value) -> registerHandlerMethod(bean, key, value));  // review
+		methods.forEach((key, value) -> registerHandlerMethod(bean, key, value));
 
 	}
 
@@ -81,6 +77,15 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 		return new CompositeMessageCondition(new MessageCondition[]{RSocketFrameTypeMessageCondition.EMPTY_CONDITION, new DestinationPatternsMessageCondition(patterns, this.obtainRouteMatcher())});
 	}
 
+	@Override
+	protected CompositeMessageCondition extendMapping(CompositeMessageCondition composite, HandlerMethod handler) {
+		return composite;
+	}
 
+	// for testing
+	public void printMappings() {
+		getHandlerMethods().entrySet().stream()
+				.forEach(set -> System.out.println(set.getKey().getMessageConditions() + " ==>  " + set.getValue().getMethod().getName()));
+	}
 
 }
