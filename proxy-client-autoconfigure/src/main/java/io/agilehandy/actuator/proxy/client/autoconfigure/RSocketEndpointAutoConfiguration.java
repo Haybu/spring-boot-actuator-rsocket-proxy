@@ -19,6 +19,7 @@ import io.agilehandy.actuator.rsocket.endpoint.ExposableRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointDiscoverer;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointsSupplier;
 import io.agilehandy.actuator.rsocket.endpoint.RouteMapper;
+import io.agilehandy.actuator.rsocket.handler.RSocketEndpointMessageHandler;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -31,11 +32,14 @@ import org.springframework.boot.actuate.endpoint.web.ExposableWebEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.rsocket.RSocketMessageHandlerCustomizer;
+import org.springframework.boot.autoconfigure.rsocket.RSocketStrategiesAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.rsocket.RSocketRequester;
+import org.springframework.messaging.rsocket.RSocketStrategies;
 
 import java.util.stream.Collectors;
 
@@ -46,7 +50,7 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 //@ConditionalOnAvailableEndpoint
 @ConditionalOnClass({ RSocketRequester.class, io.rsocket.RSocket.class, TcpServerTransport.class })
-@AutoConfigureAfter(EndpointAutoConfiguration.class)
+@AutoConfigureAfter({EndpointAutoConfiguration.class, RSocketStrategiesAutoConfiguration.class})
 @EnableConfigurationProperties(RSocketEndpointProperties.class)
 public class RSocketEndpointAutoConfiguration {
 
@@ -92,4 +96,16 @@ public class RSocketEndpointAutoConfiguration {
 				endpointRouteMappers.orderedStream().collect(Collectors.toList())
 				);
 	}
+
+	@Bean
+	public RSocketEndpointMessageHandler rSocketEndpointMessageHandler(RSocketEndpointDiscoverer discoverer
+				, ObjectProvider<RSocketStrategies> rSocketStrategies
+				, ObjectProvider<RSocketMessageHandlerCustomizer> customizers) {
+		RSocketEndpointMessageHandler messageHandler = new RSocketEndpointMessageHandler(discoverer);
+		messageHandler.setRSocketStrategies(rSocketStrategies.getIfAvailable());
+		customizers.orderedStream().forEach((customizer) -> customizer.customize(messageHandler));
+		messageHandler.setHandlers();
+		return messageHandler;
+	}
+
 }
