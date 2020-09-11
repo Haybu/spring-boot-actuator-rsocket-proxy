@@ -18,9 +18,14 @@ package io.agilehandy.actuator.rsocket.endpoint;
 import org.springframework.boot.actuate.endpoint.EndpointId;
 import org.springframework.boot.actuate.endpoint.annotation.AbstractDiscoveredOperation;
 import org.springframework.boot.actuate.endpoint.annotation.DiscoveredOperationMethod;
+import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.invoke.OperationInvoker;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Haytham Mohamed
@@ -36,19 +41,21 @@ public class DiscoveredRSocketOperation extends AbstractDiscoveredOperation impl
 	}
 
 	private String getId(String rootRoute, EndpointId endpointId, Method method) {
-		return rootRoute + "." + endpointId ;
-
-				//+ Stream.of(method.getParameters()).filter(this::hasSelector).map(this::dashName)
-				//.collect(Collectors.joining());
+		return (!StringUtils.isEmpty(rootRoute)? rootRoute + "." : "")
+				+ endpointId
+				+ Stream.of(method.getParameters())
+						.filter(this::hasSelector)
+						.map(this::dotName)
+						.collect(Collectors.joining());
 	}
 
-	//private boolean hasSelector(Parameter parameter) {
-		//return parameter.getAnnotation(Selector.class) != null;
-	//}
+	private boolean hasSelector(Parameter parameter) {
+		return parameter.getAnnotation(Selector.class) != null;
+	}
 
-	//private String dashName(Parameter parameter) {
-		//return "-" + parameter.getName();
-	//}
+	private String dotName(Parameter parameter) {
+		return "." + parameter.getName();
+	}
 
 	@Override
 	public String getId() {

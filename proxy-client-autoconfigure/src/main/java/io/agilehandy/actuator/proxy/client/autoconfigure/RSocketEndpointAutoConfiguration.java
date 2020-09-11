@@ -22,9 +22,7 @@ import io.agilehandy.actuator.rsocket.endpoint.RouteMapper;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.endpoint.expose.IncludeExcludeEndpointFilter;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.EndpointFilter;
 import org.springframework.boot.actuate.endpoint.invoke.OperationInvokerAdvisor;
 import org.springframework.boot.actuate.endpoint.invoke.ParameterValueMapper;
@@ -46,7 +44,7 @@ import java.util.stream.Collectors;
  **/
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnAvailableEndpoint
+//@ConditionalOnAvailableEndpoint
 @ConditionalOnClass({ RSocketRequester.class, io.rsocket.RSocket.class, TcpServerTransport.class })
 @AutoConfigureAfter(EndpointAutoConfiguration.class)
 @EnableConfigurationProperties(RSocketEndpointProperties.class)
@@ -69,9 +67,9 @@ public class RSocketEndpointAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(IncludeExcludeEndpointFilter.class)
-	public IncludeExcludeEndpointFilter<ExposableWebEndpoint> webExposeExcludePropertyEndpointFilter() {
-		WebEndpointProperties.Exposure exposure = this.properties.getExposure();
-		return new IncludeExcludeEndpointFilter<>(ExposableWebEndpoint.class, exposure.getInclude(),
+	public IncludeExcludeEndpointFilter<ExposableWebEndpoint> rsocketExposeExcludePropertyEndpointFilter() {
+		RSocketEndpointProperties.Exposure exposure = this.properties.getExposure();
+		return new IncludeExcludeEndpointFilter(ExposableRSocketEndpoint.class, exposure.getInclude(),
 				exposure.getExclude(), IncludeExcludeEndpointFilter.DefaultIncludes.WEB);
 	}
 
