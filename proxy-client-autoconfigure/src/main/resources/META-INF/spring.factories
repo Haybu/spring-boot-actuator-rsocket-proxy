@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.agilehandy.actuator.proxy.client.autoconfigure.RSocketEndpointAutoConfiguration
