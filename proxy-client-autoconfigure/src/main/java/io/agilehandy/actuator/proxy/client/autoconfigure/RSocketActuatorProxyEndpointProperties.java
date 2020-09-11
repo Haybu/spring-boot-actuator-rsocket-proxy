@@ -27,10 +27,10 @@ import java.util.Set;
  * @author Haytham Mohamed
  **/
 
-@ConfigurationProperties(prefix = "management.endpoints.rsocket")
-public class RSocketEndpointProperties {
+@ConfigurationProperties(prefix = "management.rsocket.proxy.endpoints")
+public class RSocketActuatorProxyEndpointProperties {
 
-	private final RSocketEndpointProperties.Exposure exposure = new RSocketEndpointProperties.Exposure();
+	private final RSocketActuatorProxyEndpointProperties.Exposure exposure = new RSocketActuatorProxyEndpointProperties.Exposure();
 
 	private String baseRoute = "actuator";
 
@@ -39,10 +39,10 @@ public class RSocketEndpointProperties {
 	 */
 	private final Map<String, String> routeMapping = new LinkedHashMap<>();
 
-	public RSocketEndpointProperties() {
+	public RSocketActuatorProxyEndpointProperties() {
 	}
 
-	public RSocketEndpointProperties.Exposure getExposure() {
+	public RSocketActuatorProxyEndpointProperties.Exposure getExposure() {
 		return this.exposure;
 	}
 

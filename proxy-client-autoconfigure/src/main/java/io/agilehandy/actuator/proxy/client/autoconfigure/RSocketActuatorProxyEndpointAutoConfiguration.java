@@ -19,7 +19,7 @@ import io.agilehandy.actuator.rsocket.endpoint.ExposableRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointDiscoverer;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointsSupplier;
 import io.agilehandy.actuator.rsocket.endpoint.RouteMapper;
-import io.agilehandy.actuator.rsocket.handler.RSocketEndpointMessageHandler;
+import io.agilehandy.actuator.rsocket.client.RSocketEndpointMessageHandler;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -51,28 +51,28 @@ import java.util.stream.Collectors;
 //@ConditionalOnAvailableEndpoint
 @ConditionalOnClass({ RSocketRequester.class, io.rsocket.RSocket.class, TcpServerTransport.class })
 @AutoConfigureAfter({EndpointAutoConfiguration.class, RSocketStrategiesAutoConfiguration.class})
-@EnableConfigurationProperties(RSocketEndpointProperties.class)
-public class RSocketEndpointAutoConfiguration {
+@EnableConfigurationProperties(RSocketActuatorProxyEndpointProperties.class)
+public class RSocketActuatorProxyEndpointAutoConfiguration {
 
 	private final ApplicationContext applicationContext;
 
-	private final RSocketEndpointProperties properties;
+	private final RSocketActuatorProxyEndpointProperties endpointProperties;
 
-	public RSocketEndpointAutoConfiguration(ApplicationContext applicationContext, RSocketEndpointProperties properties) {
+	public RSocketActuatorProxyEndpointAutoConfiguration(ApplicationContext applicationContext, RSocketActuatorProxyEndpointProperties endpointProperties) {
 		this.applicationContext = applicationContext;
-		this.properties = properties;
+		this.endpointProperties = endpointProperties;
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(RouteMapper.class)
 	public RouteMapper rsocketEndpointRouteMapper() {
-		return new MappingRSocketEndpointRouteMapper(this.properties.getRouteMapping());
+		return new MappingRSocketEndpointRouteMapper(this.endpointProperties.getRouteMapping());
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(IncludeExcludeEndpointFilter.class)
 	public IncludeExcludeEndpointFilter<ExposableWebEndpoint> rsocketExposeExcludePropertyEndpointFilter() {
-		RSocketEndpointProperties.Exposure exposure = this.properties.getExposure();
+		RSocketActuatorProxyEndpointProperties.Exposure exposure = this.endpointProperties.getExposure();
 		return new IncludeExcludeEndpointFilter(ExposableRSocketEndpoint.class, exposure.getInclude(),
 				exposure.getExclude(), IncludeExcludeEndpointFilter.DefaultIncludes.WEB);
 	}
@@ -89,7 +89,7 @@ public class RSocketEndpointAutoConfiguration {
 	                                                           ObjectProvider<RouteMapper> endpointRouteMappers,
 	                                                           ObjectProvider<OperationInvokerAdvisor> invokerAdvisors,
 	                                                           ObjectProvider<EndpointFilter<ExposableRSocketEndpoint>> filters) {
-		return new RSocketEndpointDiscoverer(this.applicationContext, properties.getBaseRoute(),
+		return new RSocketEndpointDiscoverer(this.applicationContext, endpointProperties.getBaseRoute(),
 				parameterValueMapper,
 				invokerAdvisors.orderedStream().collect(Collectors.toList()),
 				filters.orderedStream().collect(Collectors.toList()),

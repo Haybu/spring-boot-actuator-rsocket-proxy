@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.agilehandy.actuator.rsocket.handler;
+package io.agilehandy.actuator.rsocket.client;
 
 import io.agilehandy.actuator.rsocket.endpoint.DiscoveredRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.DiscoveredRSocketOperation;
