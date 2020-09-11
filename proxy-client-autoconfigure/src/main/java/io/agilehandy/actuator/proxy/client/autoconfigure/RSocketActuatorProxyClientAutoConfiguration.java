@@ -26,8 +26,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.rsocket.RSocketStrategiesAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.rsocket.RSocketStrategies;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServer;
 
 /**
@@ -43,10 +47,18 @@ import reactor.netty.http.server.HttpServer;
 public class RSocketActuatorProxyClientAutoConfiguration {
 
 	@ConditionalOnMissingBean
-	//@Bean(destroyMethod = "close")
-	RSocketActuatorProxyClient rSocketActuatorProxyClient(RSocketEndpointMessageHandler handler,
+	@Bean //(destroyMethod = "close")
+	public RSocketActuatorProxyClient rSocketActuatorProxyClient(RSocketEndpointMessageHandler handler,
 	                                                      RSocketActuatorProxyClientProperties properties) {
 		return new RSocketActuatorProxyClient(handler, properties.createClientTransport());
+	}
+
+	@Controller
+	public class PingRemoteActuator {
+		@MessageMapping("actuator-remote-ping")
+		public Mono<String> pong(String ping) {
+			return Mono.just("actuator-remote-pong");
+		}
 	}
 
 }
