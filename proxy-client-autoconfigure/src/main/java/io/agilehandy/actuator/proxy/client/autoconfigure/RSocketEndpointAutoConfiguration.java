@@ -62,7 +62,7 @@ public class RSocketEndpointAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(RouteMapper.class)
 	public RouteMapper rsocketEndpointRouteMapper() {
-		return new MappingRSocketEndpointRouteMapper(this.properties.getPathMapping());
+		return new MappingRSocketEndpointRouteMapper(this.properties.getRouteMapping());
 	}
 
 	@Bean

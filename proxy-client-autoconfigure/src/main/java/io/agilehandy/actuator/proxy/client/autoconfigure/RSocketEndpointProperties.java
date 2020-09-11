@@ -15,19 +15,22 @@
  */
 package io.agilehandy.actuator.proxy.client.autoconfigure;
 
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Haytham Mohamed
  **/
 
 @ConfigurationProperties(prefix = "management.endpoints.rsocket")
-public class RSocketEndpointProperties extends WebEndpointProperties {
+public class RSocketEndpointProperties {
+
+	private final RSocketEndpointProperties.Exposure exposure = new RSocketEndpointProperties.Exposure();
 
 	private String baseRoute = "actuator";
 
@@ -35,6 +38,13 @@ public class RSocketEndpointProperties extends WebEndpointProperties {
 	 * Mapping between endpoint IDs and the route that should expose them.
 	 */
 	private final Map<String, String> routeMapping = new LinkedHashMap<>();
+
+	public RSocketEndpointProperties() {
+	}
+
+	public RSocketEndpointProperties.Exposure getExposure() {
+		return this.exposure;
+	}
 
 	public String getBaseRoute() {
 		return this.baseRoute;
@@ -49,5 +59,29 @@ public class RSocketEndpointProperties extends WebEndpointProperties {
 
 	public Map<String, String> getRouteMapping() {
 		return this.routeMapping;
+	}
+
+	public static class Exposure {
+		private Set<String> include = new LinkedHashSet();
+		private Set<String> exclude = new LinkedHashSet();
+
+		public Exposure() {
+		}
+
+		public Set<String> getInclude() {
+			return this.include;
+		}
+
+		public void setInclude(Set<String> include) {
+			this.include = include;
+		}
+
+		public Set<String> getExclude() {
+			return this.exclude;
+		}
+
+		public void setExclude(Set<String> exclude) {
+			this.exclude = exclude;
+		}
 	}
 }
