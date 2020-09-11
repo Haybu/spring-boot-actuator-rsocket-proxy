@@ -34,14 +34,16 @@ public class DiscoveredRSocketOperation extends AbstractDiscoveredOperation impl
 
 	private final String id;
 
-	public DiscoveredRSocketOperation(String rootRoute, EndpointId endpointId, DiscoveredOperationMethod operationMethod, OperationInvoker invoker) {
+	public DiscoveredRSocketOperation(String baseRoute, String rootRoute, EndpointId endpointId, DiscoveredOperationMethod operationMethod, OperationInvoker invoker) {
 		super(operationMethod, invoker);
 		Method method = operationMethod.getMethod();
-		this.id = getId(rootRoute, endpointId, method);
+		this.id = getId(baseRoute, rootRoute, endpointId, method);
 	}
 
-	private String getId(String rootRoute, EndpointId endpointId, Method method) {
-		return (!StringUtils.isEmpty(rootRoute)? rootRoute + "." : "")
+	// route in the default form of: actuator.baseRoute.endpointId[.selected param names]
+	private String getId(String baseRoute, String rootRoute, EndpointId endpointId, Method method) {
+		return baseRoute + "."
+				+ (!StringUtils.isEmpty(rootRoute)? rootRoute + "." : "")
 				+ endpointId
 				+ Stream.of(method.getParameters())
 						.filter(this::hasSelector)

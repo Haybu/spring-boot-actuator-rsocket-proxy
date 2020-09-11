@@ -85,7 +85,8 @@ public class RSocketEndpointAutoConfiguration {
 	                                                           ObjectProvider<RouteMapper> endpointRouteMappers,
 	                                                           ObjectProvider<OperationInvokerAdvisor> invokerAdvisors,
 	                                                           ObjectProvider<EndpointFilter<ExposableRSocketEndpoint>> filters) {
-		return new RSocketEndpointDiscoverer(this.applicationContext, parameterValueMapper,
+		return new RSocketEndpointDiscoverer(this.applicationContext, properties.getBaseRoute(),
+				parameterValueMapper,
 				invokerAdvisors.orderedStream().collect(Collectors.toList()),
 				filters.orderedStream().collect(Collectors.toList()),
 				endpointRouteMappers.orderedStream().collect(Collectors.toList())

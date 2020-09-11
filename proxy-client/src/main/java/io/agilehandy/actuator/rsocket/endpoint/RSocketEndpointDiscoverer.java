@@ -34,10 +34,16 @@ public class RSocketEndpointDiscoverer extends EndpointDiscoverer<ExposableRSock
 
 	// look at MappingWebEndpointPathMapper
 	private final List<RouteMapper> endpointRouteMappers;
+	private final String baseRoute;
 
-	public RSocketEndpointDiscoverer(ApplicationContext applicationContext, ParameterValueMapper parameterValueMapper, Collection<OperationInvokerAdvisor> invokerAdvisors, Collection<EndpointFilter<ExposableRSocketEndpoint>> endpointFilters, List<RouteMapper> endpointRouteMappers) {
+	public RSocketEndpointDiscoverer(ApplicationContext applicationContext, String baseRoute
+			, ParameterValueMapper parameterValueMapper
+			, Collection<OperationInvokerAdvisor> invokerAdvisors
+			, Collection<EndpointFilter<ExposableRSocketEndpoint>> endpointFilters
+			, List<RouteMapper> endpointRouteMappers) {
 		super(applicationContext, parameterValueMapper, invokerAdvisors, endpointFilters);
 		this.endpointRouteMappers = endpointRouteMappers;
+		this.baseRoute = baseRoute;
 	}
 
 	@Override
@@ -49,7 +55,7 @@ public class RSocketEndpointDiscoverer extends EndpointDiscoverer<ExposableRSock
 	@Override
 	protected RSocketOperation createOperation(EndpointId id, DiscoveredOperationMethod operationMethod, OperationInvoker invoker) {
 		String rootRoute = RouteMapper.getRootRoute(this.endpointRouteMappers, id);
-		return new DiscoveredRSocketOperation(rootRoute, id, operationMethod, invoker);
+		return new DiscoveredRSocketOperation(baseRoute, rootRoute, id, operationMethod, invoker);
 	}
 
 	@Override
