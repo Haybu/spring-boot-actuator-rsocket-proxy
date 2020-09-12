@@ -18,7 +18,9 @@ package io.agilehandy.actuator.proxy.client.autoconfigure;
 import io.agilehandy.actuator.rsocket.client.RSocketActuatorProxyClient;
 import io.agilehandy.actuator.rsocket.client.RSocketEndpointMessageHandler;
 import io.rsocket.core.RSocketServer;
+import io.rsocket.routing.client.spring.RoutingClientAutoConfiguration;
 import io.rsocket.transport.netty.server.TcpServerTransport;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -29,6 +31,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.RSocketStrategies;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
@@ -42,15 +45,19 @@ import reactor.netty.http.server.HttpServer;
 @ConditionalOnClass({ RSocketServer.class, RSocketStrategies.class, HttpServer.class, TcpServerTransport.class })
 @ConditionalOnProperty(prefix = "management.rsocket.proxy", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnBean(RSocketEndpointMessageHandler.class)
-@AutoConfigureAfter({RSocketStrategiesAutoConfiguration.class, RSocketActuatorProxyEndpointAutoConfiguration.class})
+@AutoConfigureAfter({RSocketStrategiesAutoConfiguration.class, RoutingClientAutoConfiguration.class, RSocketActuatorProxyEndpointAutoConfiguration.class})
 @EnableConfigurationProperties(RSocketActuatorProxyClientProperties.class)
 public class RSocketActuatorProxyClientAutoConfiguration {
 
 	@ConditionalOnMissingBean
-	@Bean //(destroyMethod = "close")
-	public RSocketActuatorProxyClient rSocketActuatorProxyClient(RSocketEndpointMessageHandler handler,
-	                                                      RSocketActuatorProxyClientProperties properties) {
-		return new RSocketActuatorProxyClient(handler, properties.createClientTransport());
+	@Bean
+	public RSocketActuatorProxyClient rSocketActuatorProxyClient(ObjectProvider<RSocketRequester.Builder> builder
+					, ObjectProvider<RSocketEndpointMessageHandler> handler
+					, RSocketActuatorProxyClientProperties properties) {
+		Mono<RSocketRequester> requester = builder.getIfAvailable()
+				.rsocketConnector(connector -> connector.acceptor(handler.getIfAvailable().responder()))
+				.connect(properties.createClientTransport());
+		return new RSocketActuatorProxyClient(requester);
 	}
 
 	@Controller

@@ -16,10 +16,9 @@
 package io.agilehandy.actuator.rsocket.client;
 
 import io.rsocket.RSocket;
-import io.rsocket.core.RSocketConnector;
-import io.rsocket.transport.ClientTransport;
+import org.springframework.messaging.rsocket.RSocketRequester;
+import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
@@ -27,33 +26,14 @@ import javax.annotation.PreDestroy;
  **/
 public class RSocketActuatorProxyClient {
 
-	private volatile RSocket connection;
-	private volatile boolean requestedDisconnect = false;
+	private RSocket connection;
 
-	private final RSocketEndpointMessageHandler handler;
-	private final ClientTransport transport;
-
-	public RSocketActuatorProxyClient(RSocketEndpointMessageHandler handler, ClientTransport transport) {
-		this.handler = handler;
-		this.transport = transport;
-	}
-
-	@PostConstruct
-	public void connect() {
-		RSocketConnector.create()
-				.acceptor(handler.responder())
-				.connect(transport)
-				.doOnNext(connection -> this.connection = connection)
-				.flatMap(socket -> socket.onClose()
-						.map(v -> 1) // https://github.com/rsocket/rsocket-java/issues/819
-						.onErrorReturn(1))
-				.repeat(() -> !requestedDisconnect)
-				.subscribe();
+	public RSocketActuatorProxyClient(Mono<RSocketRequester> requester) {
+		requester.doOnNext(req -> this.connection = req.rsocket());
 	}
 
 	@PreDestroy
 	public void close() {
-		this.requestedDisconnect = true;
 		if (this.connection != null) {
 			this.connection.dispose();
 		}

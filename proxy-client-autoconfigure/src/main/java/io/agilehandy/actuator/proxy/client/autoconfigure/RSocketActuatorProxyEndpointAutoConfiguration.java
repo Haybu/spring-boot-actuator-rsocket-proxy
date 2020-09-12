@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
 //@ConditionalOnAvailableEndpoint
-@ConditionalOnClass({ RSocketRequester.class, io.rsocket.RSocket.class, TcpServerTransport.class })
+@ConditionalOnClass({ RSocketRequester.class, TcpServerTransport.class })
 @AutoConfigureAfter({EndpointAutoConfiguration.class, RSocketStrategiesAutoConfiguration.class})
 @EnableConfigurationProperties(RSocketActuatorProxyEndpointProperties.class)
 public class RSocketActuatorProxyEndpointAutoConfiguration {
