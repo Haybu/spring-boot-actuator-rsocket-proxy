@@ -15,8 +15,9 @@
  */
 package io.agilehandy.actuator.rsocket.client;
 
-import io.rsocket.RSocket;
 import io.rsocket.transport.ClientTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.rsocket.RSocketRequester;
 
 import javax.annotation.PostConstruct;
@@ -25,9 +26,11 @@ import javax.annotation.PreDestroy;
 /**
  * @author Haytham Mohamed
  **/
-public class RSocketActuatorProxyClient {
+public class RSocketActuatorProxyClient extends AbstractRSocketActuatorProxyClient {
 
-	private RSocket connection;
+	Logger log = LoggerFactory.getLogger(RSocketActuatorProxyClient.class);
+
+	private RSocketRequester proxyRSocketRequester;
 
 	private final RSocketRequester.Builder builder;
 	private final ClientTransport transport;
@@ -38,20 +41,30 @@ public class RSocketActuatorProxyClient {
 	}
 
 	@PostConstruct
-	public void connect() {
+	private void connect() {
 		if (builder != null && transport != null) {
 			builder.connect(transport)
-					.doOnNext(con -> this.connection = con.rsocket())
-					.subscribe()
-				;
+					.doOnNext(requester -> {
+						this.proxyRSocketRequester = requester;
+						proxyRSocketRequester.rsocket()
+								.onClose()
+								.doOnError(error -> log.warn("Connection CLOSED"))
+								.doFinally(consumer -> log.info("Client DISCONNECTED"))
+								.subscribe();
+					})
+					.block();
 		}
 	}
 
 	@PreDestroy
-	public void close() {
-		if (this.connection != null) {
-			this.connection.dispose();
+	private void close() {
+		if (this.proxyRSocketRequester != null && this.proxyRSocketRequester.rsocket() != null) {
+			this.proxyRSocketRequester.rsocket().dispose();
 		}
 	}
 
+	@Override
+	protected RSocketRequester getProxyRSocketRequester() {
+		return proxyRSocketRequester;
+	}
 }

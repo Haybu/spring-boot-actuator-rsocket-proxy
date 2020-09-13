@@ -27,7 +27,7 @@ import java.util.Set;
  * @author Haytham Mohamed
  **/
 
-@ConfigurationProperties(prefix = "management.rsocket.proxy.endpoints")
+@ConfigurationProperties(prefix = "management.rsocket.client.endpoints")
 public class RSocketActuatorProxyEndpointProperties {
 
 	private final RSocketActuatorProxyEndpointProperties.Exposure exposure = new RSocketActuatorProxyEndpointProperties.Exposure();

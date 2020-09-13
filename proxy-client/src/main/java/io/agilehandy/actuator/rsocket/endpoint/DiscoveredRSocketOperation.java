@@ -20,12 +20,9 @@ import org.springframework.boot.actuate.endpoint.annotation.AbstractDiscoveredOp
 import org.springframework.boot.actuate.endpoint.annotation.DiscoveredOperationMethod;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.invoke.OperationInvoker;
-import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Haytham Mohamed
@@ -36,20 +33,25 @@ public class DiscoveredRSocketOperation extends AbstractDiscoveredOperation impl
 
 	public DiscoveredRSocketOperation(String baseRoute, String rootRoute, EndpointId endpointId, DiscoveredOperationMethod operationMethod, OperationInvoker invoker) {
 		super(operationMethod, invoker);
-		Method method = operationMethod.getMethod();
-		this.id = getId(baseRoute, rootRoute, endpointId, method);
+		this.id = getId(baseRoute, rootRoute, endpointId, operationMethod);
 	}
 
 	// route in the default form of: actuator.baseRoute.endpointId.method name.[.selected param names]
-	private String getId(String baseRoute, String rootRoute, EndpointId endpointId, Method method) {
+	private String getId(String baseRoute, String rootRoute, EndpointId endpointId, DiscoveredOperationMethod operationMethod) {
 		return baseRoute + "."
-				+ (!StringUtils.isEmpty(rootRoute)? rootRoute + "." : "")
+				//+ (!StringUtils.isEmpty(rootRoute)? rootRoute + "." : "")
 				+ endpointId + "."
-				+ method.getName()
-				+ Stream.of(method.getParameters())
-						.filter(this::hasSelector)
-						.map(this::dotName)
-						.collect(Collectors.joining());
+				+ operationMethod.getOperationType().toString().toLowerCase()
+				+ operationMethod.getParameters().stream()
+					.filter(parameter -> parameter.isMandatory())
+					.map(parameter -> parameter.getName())
+					.map(this::dotName)
+					.collect(Collectors.joining())
+				//+ Stream.of(operationMethod.getMethod().getParameters())
+				//		.filter(this::hasSelector)
+				//		.map(this::dotName)
+				//		.collect(Collectors.joining())
+			;
 	}
 
 	private boolean hasSelector(Parameter parameter) {
@@ -58,6 +60,10 @@ public class DiscoveredRSocketOperation extends AbstractDiscoveredOperation impl
 
 	private String dotName(Parameter parameter) {
 		return "." + parameter.getName();
+	}
+
+	private String dotName(String parameter) {
+		return "." + parameter;
 	}
 
 	@Override

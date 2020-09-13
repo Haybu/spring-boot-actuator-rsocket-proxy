@@ -27,18 +27,22 @@ import reactor.netty.tcp.TcpClient;
  * @author Haytham Mohamed
  **/
 
-@ConfigurationProperties(prefix = "management.rsocket.proxy")
+@ConfigurationProperties(prefix = "management.rsocket.client")
 public class RSocketActuatorProxyClientProperties {
 
-	private String host = "localhost";
+	private String serviceName;
 
-	private int port = 8002;
+	private boolean enabled;
 
-	private Transport transport = Transport.TCP;
+	private final Proxy proxy = new Proxy();
 
-	private boolean secure = false;
+	public String getServiceName() {
+		return serviceName;
+	}
 
-	private boolean enabled = true;
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
 
 	public boolean isEnabled() {
 		return enabled;
@@ -48,66 +52,90 @@ public class RSocketActuatorProxyClientProperties {
 		this.enabled = enabled;
 	}
 
-	public String getHost() {
-		return host;
+	public Proxy getProxy() {
+		return proxy;
 	}
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+	public static class Proxy {
+		private String host = "localhost";
 
-	public int getPort() {
-		return port;
-	}
+		private int port = 7002;
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+		private Transport transport = Transport.TCP;
 
-	public Transport getTransport() {
-		return transport;
-	}
+		private boolean secure = false;
 
-	public void setTransport(Transport transport) {
-		this.transport = transport;
-	}
+		private boolean enabled = true;
 
-	public boolean isSecure() {
-		return secure;
-	}
+		public boolean isEnabled() {
+			return enabled;
+		}
 
-	public void setSecure(boolean secure) {
-		this.secure = secure;
-	}
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
 
-	ClientTransport createClientTransport() {
-		final TcpClient tcpClient = TcpClient.create().host(this.host).port(this.port);
-		return this.transport.create(this.secure ? tcpClient.secure() : tcpClient);
-	}
+		public String getHost() {
+			return host;
+		}
 
-	enum Transport {
+		public void setHost(String host) {
+			this.host = host;
+		}
 
-		/**
-		 * TCP transport protocol.
-		 */
-		TCP {
-			@Override
-			ClientTransport create(TcpClient tcpClient) {
-				return TcpClientTransport.create(tcpClient);
-			}
-		},
+		public int getPort() {
+			return port;
+		}
 
-		/**
-		 * WebSocket transport protocol.
-		 */
-		WEBSOCKET {
-			@Override
-			ClientTransport create(TcpClient tcpClient) {
-				return WebsocketClientTransport.create(HttpClient.from(tcpClient), "/");
-			}
-		};
+		public void setPort(int port) {
+			this.port = port;
+		}
 
-		abstract ClientTransport create(TcpClient tcpClient);
+		public Transport getTransport() {
+			return transport;
+		}
+
+		public void setTransport(Transport transport) {
+			this.transport = transport;
+		}
+
+		public boolean isSecure() {
+			return secure;
+		}
+
+		public void setSecure(boolean secure) {
+			this.secure = secure;
+		}
+
+		ClientTransport createClientTransport() {
+			final TcpClient tcpClient = TcpClient.create().host(this.host).port(this.port);
+			return this.transport.create(this.secure ? tcpClient.secure() : tcpClient);
+		}
+
+		enum Transport {
+
+			/**
+			 * TCP transport protocol.
+			 */
+			TCP {
+				@Override
+				ClientTransport create(TcpClient tcpClient) {
+					return TcpClientTransport.create(tcpClient);
+				}
+			},
+
+			/**
+			 * WebSocket transport protocol.
+			 */
+			WEBSOCKET {
+				@Override
+				ClientTransport create(TcpClient tcpClient) {
+					return WebsocketClientTransport.create(HttpClient.from(tcpClient), "/");
+				}
+			};
+
+			abstract ClientTransport create(TcpClient tcpClient);
+		}
 	}
 
 }

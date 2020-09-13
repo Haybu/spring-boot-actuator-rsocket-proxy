@@ -30,20 +30,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- from the rsocket routing project -->
-		<dependency>
-			<groupId>io.rsocket.routing</groupId>
-			<artifactId>rsocket-routing-client-spring</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>io.rsocket.routing</groupId>
-			<artifactId>rsocket-routing-frames</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-			<optional>true</optional>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
