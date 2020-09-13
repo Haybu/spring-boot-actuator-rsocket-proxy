@@ -32,7 +32,7 @@ public class RSocketActuatorProxyClientProperties {
 
 	private String host = "localhost";
 
-	private int port = 7002;
+	private int port = 8002;
 
 	private Transport transport = Transport.TCP;
 

@@ -16,9 +16,10 @@
 package io.agilehandy.actuator.rsocket.client;
 
 import io.rsocket.RSocket;
+import io.rsocket.transport.ClientTransport;
 import org.springframework.messaging.rsocket.RSocketRequester;
-import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
@@ -28,8 +29,22 @@ public class RSocketActuatorProxyClient {
 
 	private RSocket connection;
 
-	public RSocketActuatorProxyClient(Mono<RSocketRequester> requester) {
-		requester.doOnNext(req -> this.connection = req.rsocket());
+	private final RSocketRequester.Builder builder;
+	private final ClientTransport transport;
+
+	public RSocketActuatorProxyClient(RSocketRequester.Builder builder, ClientTransport transport) {
+		this.builder = builder;
+		this.transport = transport;
+	}
+
+	@PostConstruct
+	public void connect() {
+		if (builder != null && transport != null) {
+			builder.connect(transport)
+					.doOnNext(con -> this.connection = con.rsocket())
+					.subscribe()
+				;
+		}
 	}
 
 	@PreDestroy

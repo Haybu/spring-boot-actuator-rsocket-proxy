@@ -18,15 +18,17 @@ package io.agilehandy.actuator.proxy.client.autoconfigure;
 import io.agilehandy.actuator.rsocket.client.RSocketActuatorProxyClient;
 import io.agilehandy.actuator.rsocket.client.RSocketEndpointMessageHandler;
 import io.rsocket.core.RSocketServer;
+import io.rsocket.routing.client.spring.MimeTypes;
 import io.rsocket.routing.client.spring.RoutingClientAutoConfiguration;
+import io.rsocket.routing.client.spring.RoutingClientProperties;
+import io.rsocket.routing.client.spring.RoutingClientRSocketStrategiesAutoConfiguration;
+import io.rsocket.routing.frames.RouteSetup;
 import io.rsocket.transport.netty.server.TcpServerTransport;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.rsocket.RSocketStrategiesAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,19 +47,35 @@ import reactor.netty.http.server.HttpServer;
 @ConditionalOnClass({ RSocketServer.class, RSocketStrategies.class, HttpServer.class, TcpServerTransport.class })
 @ConditionalOnProperty(prefix = "management.rsocket.proxy", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnBean(RSocketEndpointMessageHandler.class)
-@AutoConfigureAfter({RSocketStrategiesAutoConfiguration.class, RoutingClientAutoConfiguration.class, RSocketActuatorProxyEndpointAutoConfiguration.class})
+@AutoConfigureAfter({RoutingClientRSocketStrategiesAutoConfiguration.class, RoutingClientAutoConfiguration.class, RSocketActuatorProxyEndpointAutoConfiguration.class})
 @EnableConfigurationProperties(RSocketActuatorProxyClientProperties.class)
 public class RSocketActuatorProxyClientAutoConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public RSocketActuatorProxyClient rSocketActuatorProxyClient(ObjectProvider<RSocketRequester.Builder> builder
-					, ObjectProvider<RSocketEndpointMessageHandler> handler
+	public RSocketActuatorProxyClient rSocketActuatorProxyClient(RSocketEndpointMessageHandler handler
+			        , RoutingClientProperties routingClientProperties
+					, RSocketStrategies strategies
 					, RSocketActuatorProxyClientProperties properties) {
-		Mono<RSocketRequester> requester = builder.getIfAvailable()
-				.rsocketConnector(connector -> connector.acceptor(handler.getIfAvailable().responder()))
-				.connect(properties.createClientTransport());
-		return new RSocketActuatorProxyClient(requester);
+		RouteSetup.Builder routeSetup = RouteSetup.from(routingClientProperties.getRouteId(),
+				routingClientProperties.getServiceName());
+		routingClientProperties.getTags().forEach((key, value) -> {
+			if (key.getWellKnownKey() != null) {
+				routeSetup.with(key.getWellKnownKey(), value);
+			}
+			else if (key.getKey() != null) {
+				routeSetup.with(key.getKey(), value);
+			}
+		});
+
+		//printStrategy(strategies);
+
+		RSocketRequester.Builder builder = RSocketRequester.builder().setupMetadata(routeSetup.build(), MimeTypes.ROUTING_FRAME_MIME_TYPE)
+				.rsocketStrategies(strategies)
+				.rsocketConnector(connector -> connector.acceptor(handler.responder()))
+				;
+
+		return new RSocketActuatorProxyClient(builder, properties.createClientTransport());
 	}
 
 	@Controller
@@ -66,6 +84,20 @@ public class RSocketActuatorProxyClientAutoConfiguration {
 		public Mono<String> pong(String ping) {
 			return Mono.just("actuator-remote-pong");
 		}
+	}
+
+
+	// for testing
+	private void printStrategy(RSocketStrategies strategies) {
+		System.out.println("==> Decoders:");
+		strategies.decoders().stream()
+				.flatMap(d -> d.getDecodableMimeTypes().stream())
+				.forEach(System.out::println);
+
+		System.out.println("==> Encoders:");
+		strategies.encoders().stream()
+				.flatMap(d -> d.getEncodableMimeTypes().stream())
+				.forEach(System.out::println);
 	}
 
 }

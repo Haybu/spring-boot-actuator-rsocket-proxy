@@ -40,11 +40,12 @@ public class DiscoveredRSocketOperation extends AbstractDiscoveredOperation impl
 		this.id = getId(baseRoute, rootRoute, endpointId, method);
 	}
 
-	// route in the default form of: actuator.baseRoute.endpointId[.selected param names]
+	// route in the default form of: actuator.baseRoute.endpointId.method name.[.selected param names]
 	private String getId(String baseRoute, String rootRoute, EndpointId endpointId, Method method) {
 		return baseRoute + "."
 				+ (!StringUtils.isEmpty(rootRoute)? rootRoute + "." : "")
-				+ endpointId
+				+ endpointId + "."
+				+ method.getName()
 				+ Stream.of(method.getParameters())
 						.filter(this::hasSelector)
 						.map(this::dotName)

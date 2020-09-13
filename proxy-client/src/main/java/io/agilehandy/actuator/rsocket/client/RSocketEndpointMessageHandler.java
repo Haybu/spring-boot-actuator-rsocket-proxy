@@ -21,7 +21,6 @@ import io.agilehandy.actuator.rsocket.endpoint.ExposableRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointsSupplier;
 import org.springframework.messaging.handler.CompositeMessageCondition;
 import org.springframework.messaging.handler.DestinationPatternsMessageCondition;
-import org.springframework.messaging.handler.HandlerMethod;
 import org.springframework.messaging.handler.MessageCondition;
 import org.springframework.messaging.rsocket.annotation.support.RSocketFrameTypeMessageCondition;
 import org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler;
@@ -43,9 +42,12 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 
 	public RSocketEndpointMessageHandler(RSocketEndpointsSupplier supplier) {
 		this.supplier = supplier;
-		this.setHandlerPredicate(null);
+		this.setHandlerPredicate(null); // disable auto-detection
 	}
 
+	/**
+	 * set handlers from discovered endpoints
+	 */
 	@PostConstruct
 	public void setHandlers() {
 		Collection<ExposableRSocketEndpoint> endpoints = supplier.getEndpoints();
@@ -63,6 +65,7 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 		printMappings();
 	}
 
+	// register routes to methods
 	protected final void detectEndpointHandlerMethods(Object bean, List<DiscoveredRSocketOperation> operations) {
 		Map<Method, CompositeMessageCondition> methods = new HashMap<>();
 		operations.stream()
@@ -77,10 +80,12 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 		return new CompositeMessageCondition(new MessageCondition[]{RSocketFrameTypeMessageCondition.EMPTY_CONDITION, new DestinationPatternsMessageCondition(patterns, this.obtainRouteMatcher())});
 	}
 
+	/**
 	@Override
 	protected CompositeMessageCondition extendMapping(CompositeMessageCondition composite, HandlerMethod handler) {
 		return composite;
 	}
+	*/
 
 	// for testing
 	public void printMappings() {
