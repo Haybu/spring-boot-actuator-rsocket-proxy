@@ -37,7 +37,7 @@ public class SampleProxyClientApplication {
 
 			// use the proxy client to read connected actuator health
 			ActuatorReadRequest readRequest = new ActuatorReadRequest.Builder()
-					.withRoute("actuator.features.read")
+					.withRoute("actuator.health.read")
 					.build();
 
 			proxyClient.read(readRequest)
