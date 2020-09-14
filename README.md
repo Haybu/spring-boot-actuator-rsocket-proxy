@@ -20,9 +20,9 @@ add the `actuator-proxy-client-spring-boot-starter` dependency:
 </dependency>
 ```
 
-set also the following properties in your `application.yaml` to connect to a proxy,
-specify a service name, and (temporary for now) define the exposed endpoints to be as the 
-same as the ones that you exposed by your managed actuator.
+Set also the following properties in your `application.yaml` or `application.properties` file to connect to the proxy,
+to specify a service name, and to expose proxied endpoints. You can define the exposed list of proxied endpoints to be 
+the same as the ones that are included via the service's configured actuator.
 
 ```yaml
 management:
@@ -65,8 +65,8 @@ class MyClass {
 }
 ```
 
-You can view all mapped routes to actuator endpoints logged out 
-setting `logging.level.io.agilehandy.actuator.rsocket.client` in your properties file.
+The client would automatically map routes to exposed actuator endpoints. You can view all mapped routes to actuator 
+endpoints logged out setting `logging.level.io.agilehandy.actuator.rsocket.client` in your properties file.
 
 An endpoint route takes a form of: `baseRoot.endpointId.operation.[parameter-name *]`
 where the baseRoot defaults to a value of `actuator`
@@ -84,10 +84,10 @@ The proxy would run on port 7002.
 ### Work In-Progress
 *   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
 by which you can perform proxied read and write operations on connected clients. All these request domain objects
-can include operation parameters if needed. 
-
-*   Another potential use is to leverage this mechanism to refresh configuration of all connected instances of 
-a specific microservice, probably on k8s via a native controller.
+can include operation parameters as needed. 
+ 
+*   Expanded goal, to blend a proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
+of a particular targeted microservice.
 
 
 
