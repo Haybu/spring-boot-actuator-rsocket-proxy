@@ -53,7 +53,7 @@ class MyClass {
     public void readHealth() {
     // create a read operation request object
     ActuatorReadRequest readRequest = new ActuatorReadRequest.Builder()
-        .withRoute("actuator.health.read")  // route formed from: baseRoot.endpointId.option (where baseRoot has a value of actuator)
+        .withRoute("actuator.health.read")  // route formed from: baseRoot.endpointId.operation (where baseRoot has a value of actuator)
         .build();
 
     // use the proxy client to read connected actuator health
