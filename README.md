@@ -80,7 +80,8 @@ A sub-module sample `sample-proxy-client` is provided to see a client in action.
 
 ### Actuator Proxy
 
-I am putting a docker image together and plan to publish it soon. Meanwhile, you can run the main class on the `proxy-server` sub-module.
+Use the published docker image `haybu/spring-actuator-rsocket-proxy:v0 ` to run the RSocket Actuator Proxy. 
+A shell script `./scripts/spring-actuator-rsocket-proxy.sh` is provided to run the proxy. 
 The proxy would run on port 7002.
 
 ### Work In-Progress
