@@ -7,10 +7,10 @@
 The idea is to reach out and collect actuator management endpoints from 
 all instances of a particular microservice (or probably instances of ALL services).
 
-### On Spring boot microservice client
+### Actuator Proxy Client
 
-provided your service has the `spring-boot-starter-rsocket` and `spring-boot-starter-actuator` dependencies, add
-the following proxy client starter dependency:
+provided you use spring boot and have the `spring-boot-starter-rsocket` and `spring-boot-starter-actuator` dependencies included, 
+add the following proxy client starter dependency:
 
 ```xml
 <dependency>
@@ -20,7 +20,7 @@ the following proxy client starter dependency:
 </dependency>
 ```
 
-add the following properties to your `application.yaml` to connect to a proxy,
+set also the following properties in your `application.yaml` to connect to a proxy,
 specify a service name, and (temporary for now) define the exposed endpoints to be as the 
 same as the ones that you exposed by your managed actuator.
 
@@ -76,7 +76,7 @@ for example:
 *   to read a client health by path name parameter, the route would look like: `actuator.health.read.name`. The parameter name
 and value would be passed via the request object.
 
-####### In-Progress
+##### Work In-Progress
 *   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
 by which you can perform proxied read and write operation on connected clients. All these operation request domain objects
 can optionally include any operation parameters. 
@@ -86,7 +86,7 @@ a specific microservice.
 
 ### Actuator Proxy
 
-I am putting a docker image together to publish. Meanwhile, you can run the main class on the `proxy-server` sub-module.
+I am putting a docker image together and plan to publish it soon. Meanwhile, you can run the main class on the `proxy-server` sub-module.
 The proxy would run on port 7002.
 
 
