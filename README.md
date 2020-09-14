@@ -69,7 +69,7 @@ The client would automatically map routes to exposed actuator endpoints. You can
 endpoints by setting `logging.level.io.agilehandy.actuator.rsocket.client=DEBUG` in your properties file.
 
 An endpoint route takes a form of: `baseRoot.endpointId.operation.[parameter-name *]`
-where the baseRoot defaults to "`actuator`" value.
+where the baseRoot defaults to `actuator` value.
 
 For example: 
 *   to read a client health the route would look like `actuator.health.read`
