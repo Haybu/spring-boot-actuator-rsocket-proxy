@@ -65,12 +65,15 @@ public class ProxyService {
 		log.info("actuator route: " + route);
 		String data = this.getData(request);
 		List<RSocketRequester> targets = this.targets(request.getServiceName());
-		return Flux.fromIterable(targets).flatMap(requester ->
-				requester.route(route)
+		return Flux.fromIterable(targets)
+				.flatMap(requester ->
+					requester.route(route)
 						.data(DefaultPayload.create(data))
 						.retrieveMono(Object.class))
 						.map(this::objectToString)
-				.collect(Collectors.joining("\n"));
+						.collect(Collectors.joining(",\n"))
+						.map(str -> "[\n " + str + " \n]")
+				;
 	}
 
 	public Mono<Void> connectedActuatorUpdate(final AbstractActuatorRequest request) {
@@ -111,7 +114,7 @@ public class ProxyService {
 		String json = parameters.stream()
 				.map(this::buildParameterString)
 				.collect(Collectors.joining(","));
-		return "{ [ " + json + "] }";
+		return "[ " + json + " ]";
 	}
 
 	private String buildParameterString(Parameter parameter) {
