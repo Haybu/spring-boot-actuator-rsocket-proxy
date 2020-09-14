@@ -76,6 +76,8 @@ For example:
 *   to read a client health by path name parameter, the route would look like: `actuator.health.read.name`. The parameter name
 and value would be passed via the request object.
 
+A sub-module sample `sample-proxy-client` is provided to see a client in action.
+
 ### Actuator Proxy
 
 I am putting a docker image together and plan to publish it soon. Meanwhile, you can run the main class on the `proxy-server` sub-module.
