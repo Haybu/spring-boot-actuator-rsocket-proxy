@@ -9,8 +9,8 @@ all instances of a particular microservice (or probably instances of ALL service
 
 ### Actuator Proxy Client
 
-provided you use spring boot and have the `spring-boot-starter-rsocket` and `spring-boot-starter-actuator` dependencies included, 
-add the following proxy client starter dependency:
+provided you are using spring boot and having the `spring-boot-starter-rsocket` and `spring-boot-starter-actuator` dependencies included, 
+add the `actuator-proxy-client-spring-boot-starter` dependency:
 
 ```xml
 <dependency>
@@ -68,10 +68,10 @@ class MyClass {
 You can view all mapped routes to actuator endpoints logged out 
 setting `logging.level.io.agilehandy.actuator.rsocket.client` in your properties file.
 
-endpoint route format is: `baseRoot.endpointId.operation.[parameter-name *]`
-where baseRoot defaults to a value of `actuator`
+An endpoint route takes a form of: `baseRoot.endpointId.operation.[parameter-name *]`
+where the baseRoot defaults to a value of `actuator`
 
-for example: 
+For example: 
 *   to read a client health the route would look like `actuator.health.read`
 *   to read a client health by path name parameter, the route would look like: `actuator.health.read.name`. The parameter name
 and value would be passed via the request object.
