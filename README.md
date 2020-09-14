@@ -83,11 +83,11 @@ The proxy would run on port 7002.
 
 ### Work In-Progress
 *   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
-by which you can perform proxied read and write operation on connected clients. All these operation request domain objects
-can optionally include any operation parameters. 
+by which you can perform proxied read and write operations on connected clients. All these request domain objects
+can include operation parameters if needed. 
 
-*   Potential use is to leverage this mechanism to refresh configuration of all connected instances of 
-a specific microservice, probably on k8s via a controller.
+*   Another potential use is to leverage this mechanism to refresh configuration of all connected instances of 
+a specific microservice, probably on k8s via a native controller.
 
 
 
