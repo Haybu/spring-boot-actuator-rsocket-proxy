@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.RSocketStrategies;
-import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServer;
 
@@ -64,14 +63,13 @@ public class RSocketActuatorProxyClientAutoConfiguration {
 		return new RSocketActuatorProxyClient(builder, properties.getProxy().createClientTransport());
 	}
 
-	@Controller
+	// you can add this to the set of handlers when creating a client responder
 	public class PingRemoteActuator {
 		@MessageMapping("actuator-remote-ping")
 		public Mono<String> pong(String ping) {
 			return Mono.just("actuator-remote-pong");
 		}
 	}
-
 
 	// for testing
 	private void printStrategy(RSocketStrategies strategies) {

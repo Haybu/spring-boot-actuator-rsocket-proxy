@@ -25,6 +25,7 @@
 		<module>proxy-client-autoconfigure</module>
 		<module>proxy-client-starter</module>
 		<module>proxy-server</module>
+		<module>sample-proxy-client</module>
 	</modules>
 
 	<dependencyManagement>

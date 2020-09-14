@@ -1,0 +1,26 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: sample-proxy-client
+
+logging:
+  level:
+    org.springframework.messaging.rsocket: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,features
+  rsocket:
+    client:
+      service-name: ${spring.application.name}
+      endpoints:
+        exposure:
+          include: ${management.endpoints.web.exposure.include}
+      proxy:
+        host: localhost
+        port: 7002
+
