@@ -76,18 +76,18 @@ for example:
 *   to read a client health by path name parameter, the route would look like: `actuator.health.read.name`. The parameter name
 and value would be passed via the request object.
 
+### Actuator Proxy
+
+I am putting a docker image together and plan to publish it soon. Meanwhile, you can run the main class on the `proxy-server` sub-module.
+The proxy would run on port 7002.
+
 ##### Work In-Progress
 *   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
 by which you can perform proxied read and write operation on connected clients. All these operation request domain objects
 can optionally include any operation parameters. 
 
 *   Potential use is to leverage this mechanism to refresh configuration of all connected instances of 
-a specific microservice.
-
-### Actuator Proxy
-
-I am putting a docker image together and plan to publish it soon. Meanwhile, you can run the main class on the `proxy-server` sub-module.
-The proxy would run on port 7002.
+a specific microservice, probably on k8s via a controller.
 
 
 
