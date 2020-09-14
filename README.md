@@ -92,7 +92,7 @@ can include operation parameters as needed.
 *   Result from each obtained proxied actuator endpoint to include an identifying client ID. 
  
 *   Expanded goal, to blend the proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
-of a particular targeted microservice.
+of all instances of a particular targeted microservice.
 
 
 
