@@ -65,8 +65,8 @@ class MyClass {
 }
 ```
 
-The client would automatically map routes to exposed actuator endpoints. You can view all mapped routes to actuator 
-endpoints logged out setting `logging.level.io.agilehandy.actuator.rsocket.client` in your properties file.
+The client would automatically map routes to exposed actuator endpoints. You can log out and view all mapped routes to actuator 
+endpoints by setting `logging.level.io.agilehandy.actuator.rsocket.client=DEBUG` in your properties file.
 
 An endpoint route takes a form of: `baseRoot.endpointId.operation.[parameter-name *]`
 where the baseRoot defaults to a value of `actuator`
