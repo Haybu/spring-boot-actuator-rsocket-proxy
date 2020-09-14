@@ -86,12 +86,12 @@ The proxy would run on port 7002.
 
 ### Work In-Progress
 *   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
-by which you can perform proxied read and write operations on connected clients. All these request domain objects
+by which you can perform proxied write and delete operations respectively on connected clients. All these request domain objects
 can include operation parameters as needed. 
 
-*   Each obtained proxied actuator endpoint result to include a client ID. 
+*   Result from each obtained proxied actuator endpoint to include a client ID. 
  
-*   Expanded goal, to blend a proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
+*   Expanded goal, to blend the proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
 of a particular targeted microservice.
 
 
