@@ -15,6 +15,7 @@
  */
 package io.agilehandy.actuator.proxy.client.autoconfigure;
 
+import io.agilehandy.actuator.rsocket.client.ActuatorProxyClient;
 import io.agilehandy.actuator.rsocket.client.RSocketActuatorProxyClient;
 import io.agilehandy.actuator.rsocket.client.RSocketEndpointMessageHandler;
 import io.rsocket.core.RSocketServer;
@@ -49,7 +50,7 @@ public class RSocketActuatorProxyClientAutoConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public RSocketActuatorProxyClient rSocketActuatorProxyClient(RSocketEndpointMessageHandler handler
+	public ActuatorProxyClient rSocketActuatorProxyClient(RSocketEndpointMessageHandler handler
 					, RSocketStrategies strategies
 					, RSocketActuatorProxyClientProperties properties) {
 

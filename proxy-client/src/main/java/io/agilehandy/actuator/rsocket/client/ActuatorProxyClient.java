@@ -18,40 +18,13 @@ package io.agilehandy.actuator.rsocket.client;
 import io.agilehandy.actuator.rsocket.domain.ActuatorDeleteRequest;
 import io.agilehandy.actuator.rsocket.domain.ActuatorReadRequest;
 import io.agilehandy.actuator.rsocket.domain.ActuatorWriteRequest;
-import org.springframework.messaging.rsocket.RSocketRequester;
 import reactor.core.publisher.Mono;
 
-/**
- * @author Haytham Mohamed
- *
- * to interegate the proxy
- **/
-public abstract class AbstractRSocketActuatorProxyClient implements ActuatorProxyClient {
+public interface ActuatorProxyClient {
 
-	protected abstract RSocketRequester getProxyRSocketRequester();
+	public Mono<String> read(final ActuatorReadRequest request);
 
-	public Mono<String> read(final ActuatorReadRequest request) {
-		return this.getProxyRSocketRequester()
-				.route("actuator-read")
-				.data(request)
-				.retrieveMono(String.class)
-				;
-	}
+	public Mono<Void> write(final ActuatorWriteRequest request);
 
-	public Mono<Void> write(final ActuatorWriteRequest request) {
-		return this.getProxyRSocketRequester()
-				.route("actuator-write")
-				.data(request)
-				.send()
-				;
-	}
-
-	public Mono<Void> delete(final ActuatorDeleteRequest request) {
-		return this.getProxyRSocketRequester()
-				.route("actuator-delete")
-				.data(request)
-				.send()
-				;
-	}
-
+	public Mono<Void> delete(final ActuatorDeleteRequest request);
 }

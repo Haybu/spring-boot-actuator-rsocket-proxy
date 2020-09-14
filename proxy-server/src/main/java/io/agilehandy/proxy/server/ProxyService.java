@@ -88,10 +88,10 @@ public class ProxyService {
 		List<RSocketRequester> targets = null;
 		if (StringUtils.isEmpty(serviceName)) {
 			targets = clientRepository.getAll();
-			log.info("targeting actuator of All connected clients. (" + targets.size() + ")");
+			log.info("targeting actuator of All connected clients. (number of clients: " + targets.size() + ")");
 		} else {
 			targets = clientRepository.connectedClientsByServiceName(serviceName);
-			log.info("targeting actuator of connected service " + serviceName + " (" + targets.size() + ")");
+			log.info("targeting actuator of connected service " + serviceName + " (number of clients: " + targets.size() + ")");
 		}
 		return targets;
 	}

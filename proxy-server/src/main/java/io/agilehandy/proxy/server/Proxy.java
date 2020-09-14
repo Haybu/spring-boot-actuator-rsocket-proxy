@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Haytham Mohamed
  **/
 
-// may not be in use
+// this class is not currently in use, we can extend to provide a proxy over http
 //@RestController
 public class Proxy {
 
