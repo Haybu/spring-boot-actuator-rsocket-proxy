@@ -30,7 +30,7 @@ public abstract class AbstractActuatorRequest implements Serializable {
 	private OperationType operationType;
 	private List<Parameter> parameters;
 
-	public boolean hasParameters() { return parameters == null || parameters.isEmpty() ; }
+	public boolean hasParameters() { return parameters != null && !parameters.isEmpty(); }
 
 	public String getRoute() {
 		return route;

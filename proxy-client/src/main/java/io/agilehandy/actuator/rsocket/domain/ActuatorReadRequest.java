@@ -25,16 +25,18 @@ import java.util.List;
  **/
 public class ActuatorReadRequest extends AbstractActuatorRequest {
 
+	private ActuatorReadRequest() {}
+
 	public static class Builder {
-		private AbstractActuatorRequest requestToBuild;
+		private ActuatorReadRequest requestToBuild;
 
 		public Builder() {
 			requestToBuild = new ActuatorReadRequest();
 		}
 
-		public AbstractActuatorRequest build() {
+		public ActuatorReadRequest build() {
 			requestToBuild.setOperationType(OperationType.READ);
-			AbstractActuatorRequest requestBuilt = requestToBuild;
+			ActuatorReadRequest requestBuilt = requestToBuild;
 			requestToBuild = new ActuatorReadRequest();
 			return requestBuilt;
 		}

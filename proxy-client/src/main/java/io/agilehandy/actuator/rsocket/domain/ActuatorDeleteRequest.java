@@ -25,16 +25,18 @@ import java.util.List;
  **/
 public class ActuatorDeleteRequest extends AbstractActuatorRequest {
 
+	private ActuatorDeleteRequest() {}
+
 	public static class Builder {
-		private AbstractActuatorRequest requestToBuild;
+		private ActuatorDeleteRequest requestToBuild;
 
 		public Builder() {
 			requestToBuild = new ActuatorDeleteRequest();
 		}
 
-		public AbstractActuatorRequest build() {
+		public ActuatorDeleteRequest build() {
 			requestToBuild.setOperationType(OperationType.DELETE);
-			AbstractActuatorRequest requestBuilt = requestToBuild;
+			ActuatorDeleteRequest requestBuilt = requestToBuild;
 			requestToBuild = new ActuatorDeleteRequest();
 			return requestBuilt;
 		}

@@ -15,7 +15,9 @@
  */
 package io.agilehandy.proxy.server;
 
-import io.agilehandy.actuator.rsocket.domain.AbstractActuatorRequest;
+import io.agilehandy.actuator.rsocket.domain.ActuatorDeleteRequest;
+import io.agilehandy.actuator.rsocket.domain.ActuatorReadRequest;
+import io.agilehandy.actuator.rsocket.domain.ActuatorWriteRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -62,12 +64,17 @@ public class ProxyController {
 	}
 
 	@MessageMapping("actuator-read")
-	public Mono<String> read(final AbstractActuatorRequest request) {
+	public Mono<String> read(final ActuatorReadRequest request) {
 		return service.connectedActuatorRead(request);
 	}
 
-	@MessageMapping("actuator-update")
-	public Mono<Void> update(final AbstractActuatorRequest request) {
+	@MessageMapping("actuator-write")
+	public Mono<Void> write(final ActuatorWriteRequest request) {
+		return service.connectedActuatorUpdate(request);
+	}
+
+	@MessageMapping("actuator-delete")
+	public Mono<Void> delete(final ActuatorDeleteRequest request) {
 		return service.connectedActuatorUpdate(request);
 	}
 

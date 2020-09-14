@@ -21,6 +21,7 @@
 		<dependency>
 			<groupId>io.agilehandy</groupId>
 			<artifactId>actuator-proxy-client</artifactId>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

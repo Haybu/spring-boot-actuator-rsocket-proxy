@@ -25,16 +25,18 @@ import java.util.List;
  **/
 public class ActuatorWriteRequest extends AbstractActuatorRequest {
 
+	private ActuatorWriteRequest() {}
+
 	public static class Builder {
-		private AbstractActuatorRequest requestToBuild;
+		private ActuatorWriteRequest requestToBuild;
 
 		public Builder() {
 			requestToBuild = new ActuatorWriteRequest();
 		}
 
-		public AbstractActuatorRequest build() {
+		public ActuatorWriteRequest build() {
 			requestToBuild.setOperationType(OperationType.WRITE);
-			AbstractActuatorRequest requestBuilt = requestToBuild;
+			ActuatorWriteRequest requestBuilt = requestToBuild;
 			requestToBuild = new ActuatorWriteRequest();
 			return requestBuilt;
 		}

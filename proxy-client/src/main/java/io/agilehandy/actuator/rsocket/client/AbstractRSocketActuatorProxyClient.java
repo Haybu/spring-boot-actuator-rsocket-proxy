@@ -15,7 +15,6 @@
  */
 package io.agilehandy.actuator.rsocket.client;
 
-import io.agilehandy.actuator.rsocket.domain.AbstractActuatorRequest;
 import io.agilehandy.actuator.rsocket.domain.ActuatorDeleteRequest;
 import io.agilehandy.actuator.rsocket.domain.ActuatorReadRequest;
 import io.agilehandy.actuator.rsocket.domain.ActuatorWriteRequest;
@@ -40,18 +39,19 @@ public abstract class AbstractRSocketActuatorProxyClient {
 	}
 
 	public Mono<Void> write(final ActuatorWriteRequest request) {
-		return this.doUpdate(request);
-	}
-
-	public Mono<Void> delete(final ActuatorDeleteRequest request) {
-		return this.doUpdate(request);
-	}
-
-	private Mono<Void> doUpdate(AbstractActuatorRequest request) {
 		return this.getProxyRSocketRequester()
-				.route("actuator-update")
+				.route("actuator-write")
 				.data(request)
 				.send()
 				;
 	}
+
+	public Mono<Void> delete(final ActuatorDeleteRequest request) {
+		return this.getProxyRSocketRequester()
+				.route("actuator-delete")
+				.data(request)
+				.send()
+				;
+	}
+
 }
