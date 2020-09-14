@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -58,7 +59,7 @@ public class ProxyService {
 		log.info("connection of actuator client " + serviceName + " is unregistered");
 	}
 
-	public Mono<String> connectedActuatorRead(AbstractActuatorRequest request) {
+	public Mono<String> connectedActuatorRead(final AbstractActuatorRequest request) {
 		log.info("reading actuator from all connected clients.");
 		String route = request.getRoute();
 		log.info("actuator route: " + route);
@@ -67,11 +68,12 @@ public class ProxyService {
 		return Flux.fromIterable(targets).flatMap(requester ->
 				requester.route(route)
 						.data(DefaultPayload.create(data))
-						.retrieveMono(String.class))
+						.retrieveMono(Object.class))
+						.map(this::objectToString)
 				.collect(Collectors.joining("\n"));
 	}
 
-	public Mono<Void> connectedActuatorUpdate(AbstractActuatorRequest request) {
+	public Mono<Void> connectedActuatorUpdate(final AbstractActuatorRequest request) {
 		log.info("updating actuator from all connected clients.");
 		String route = request.getRoute();
 		log.info("actuator route: " + route);
@@ -123,6 +125,17 @@ public class ProxyService {
 			e.printStackTrace();
 		}
 		return "{ \"" + name + "\": " + valueStr + " }";
+	}
+
+	private String objectToString(Object obj) {
+		Assert.notNull(obj, "Object should not be null to map to String");
+		try {
+			return objectMapper.writeValueAsString(obj);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		return "cannot map Object to String";
 	}
 
 }
