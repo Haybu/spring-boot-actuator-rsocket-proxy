@@ -89,7 +89,7 @@ The proxy would run on port 7002.
 by which you can perform proxied write and delete operations respectively on connected clients. All these request domain objects
 can include operation parameters as needed. 
 
-*   Result from each obtained proxied actuator endpoint to include a client ID. 
+*   Result from each obtained proxied actuator endpoint to include an identifying client ID. 
  
 *   Expanded goal, to blend the proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
 of a particular targeted microservice.
