@@ -8,6 +8,7 @@ spring:
 logging:
   level:
     org.springframework.messaging.rsocket: INFO
+    io.agilehandy.actuator.rsocket.client: DEBUG
 
 management:
   endpoints:

@@ -19,6 +19,8 @@ import io.agilehandy.actuator.rsocket.endpoint.DiscoveredRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.DiscoveredRSocketOperation;
 import io.agilehandy.actuator.rsocket.endpoint.ExposableRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointsSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.CompositeMessageCondition;
 import org.springframework.messaging.handler.DestinationPatternsMessageCondition;
 import org.springframework.messaging.handler.MessageCondition;
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
  * @author Haytham Mohamed
  **/
 public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
+
+	Logger log = LoggerFactory.getLogger(RSocketEndpointMessageHandler.class);
 
 	private final RSocketEndpointsSupplier supplier;
 
@@ -62,7 +66,10 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 
 		this.setHandlerPredicate(null); // disable auto-detection
 
-		printMappings();
+		if (log.isDebugEnabled()) {
+			printMappings();
+		}
+
 	}
 
 	// register routes to methods
@@ -71,7 +78,6 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 		operations.stream()
 				.forEach(op -> methods.put(op.getOperationMethod().getMethod(), this.getMappingForEndPointMethod(op)));
 		methods.forEach((key, value) -> registerHandlerMethod(bean, key, value));
-
 	}
 
 	protected CompositeMessageCondition getMappingForEndPointMethod(DiscoveredRSocketOperation operation) {
@@ -87,10 +93,10 @@ public class RSocketEndpointMessageHandler extends RSocketMessageHandler {
 	}
 	*/
 
-	// for testing
 	public void printMappings() {
+		log.debug("Route to endpoint mappings: ");
 		getHandlerMethods().entrySet().stream()
-				.forEach(set -> System.out.println(set.getKey().getMessageConditions() + " ==>  " + set.getValue().getMethod().getName()));
+				.forEach(set -> log.debug(set.getKey().getMessageConditions() + " ==>  " + set.getValue().getMethod().getName()));
 	}
 
 }
