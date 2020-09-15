@@ -52,23 +52,23 @@ public class ProxyController {
 					// Add new client to a clients list
 					if (service.registerClientConnection((String)setupData.get("client-name")
 							, (Integer)setupData.get("client-id"), clientRequester)) {
-						log.info("Client with service name {} and client id {} is connected to proxy."
+						log.info("Client with name {} and id {} is connected to proxy."
 								, setupData.get("client-name"), setupData.get("client-id"));
 					} else {
-						log.info("Client with service name {} and client id {} is not connected to proxy."
+						log.info("Client with name {} and id {} is not connected to proxy."
 								, setupData.get("client-name"), setupData.get("client-id"));
 					}
 				})
 				.doOnError(error -> {
 					// Warn when channels are closed by clients
-					log.warn("Channel to client with service name {} and client id {} is closed."
+					log.warn("Channel to client with name {} and id {} is closed."
 							, setupData.get("client-name"), setupData.get("client-id"));
 				})
 				.doFinally(consumer -> {
 					// Remove disconnected clients from the client list
 					if (service.unregisterClientConnection((String)setupData.get("client-name")
 							, (Integer)setupData.get("client-id"), clientRequester)) {
-						log.info("Client with service name {} and client id {} is disconnected from proxy."
+						log.info("Client with name {} and id {} is disconnected from proxy."
 								, setupData.get("client-name"), setupData.get("client-id"));
 					}
 				})

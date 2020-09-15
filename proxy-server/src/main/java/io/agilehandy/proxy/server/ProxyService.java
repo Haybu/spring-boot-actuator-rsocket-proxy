@@ -51,20 +51,19 @@ public class ProxyService {
 
 	public boolean registerClientConnection(String clientName, Integer clientId, RSocketRequester requester) {
 		boolean result = clientRepository.add(clientName, clientId, requester);
-		log.info("connection of actuator client " + clientName + " is registered");
+		log.info("connection of actuator client name {} and id {} is registered", clientName, clientId);
 		return result;
 	}
 
 	public boolean unregisterClientConnection(String clientName, Integer clientId, RSocketRequester requester) {
 		boolean result = clientRepository.remove(clientName, clientId, requester);
-		log.info("connection of actuator client " + clientName + " is unregistered");
+		log.info("connection of actuator client name {} and id {} is unregistered", clientName, clientId);
 		return  result;
 	}
 
 	public Mono<String> connectedActuatorRead(final AbstractActuatorRequest request) {
-		log.info("reading actuator from all connected clients.");
 		String route = request.getRoute();
-		log.info("actuator route: " + route);
+		log.info("reading actuator from all connected clients with route {}", route);
 		String data = this.getData(request);
 		List<RSocketClientConnection> connections = this.targetConnections(request.getClientName());
 		return Flux.fromIterable(connections)
@@ -80,9 +79,8 @@ public class ProxyService {
 	}
 
 	public Mono<Void> connectedActuatorUpdate(final AbstractActuatorRequest request) {
-		log.info("updating actuator from all connected clients.");
 		String route = request.getRoute();
-		log.info("actuator route: " + route);
+		log.info("updating actuator of all connected clients with route {}", route);
 		String data = this.getData(request);
 		List<RSocketClientConnection> connections = this.targetConnections(request.getClientName());
 		return Flux.fromIterable(connections)
@@ -98,10 +96,12 @@ public class ProxyService {
 		List<RSocketClientConnection> targets = null;
 		if (StringUtils.isEmpty(clientName)) {
 			targets = clientRepository.getAll();
-			log.info("targeting actuator of All connected clients. (number of clients: " + targets.size() + ")");
+			log.info("targeting actuator of All connected clients. (number of clients {}) "
+					, targets.size());
 		} else {
 			targets = clientRepository.findAllByClientName(clientName);
-			log.info("targeting actuator of connected service " + clientName + " (number of clients: " + targets.size() + ")");
+			log.info("targeting actuator of connected clients with  name {} (number of clients {})"
+					, clientName, targets.size());
 		}
 		return targets;
 	}
