@@ -65,6 +65,8 @@ class MyClass {
 }
 ```
 
+The output result from each obtained proxied actuator endpoint includes the ID of each client.
+
 The client would automatically map routes to exposed actuator endpoints. You can log out and view all mapped routes to actuator 
 endpoints by setting `logging.level.io.agilehandy.actuator.rsocket.client=DEBUG` in your properties file.
 
@@ -88,8 +90,6 @@ The proxy would run on port 7002.
 *   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
 by which you can perform proxied write and delete operations respectively on connected clients. All these request domain objects
 can include operation parameters as needed. 
-
-*   Result from each obtained proxied actuator endpoint to include an identifying client ID. 
  
 *   Expanded goal, to blend the proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
 of all instances of a particular microservice.
