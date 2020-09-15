@@ -65,7 +65,29 @@ class MyClass {
 }
 ```
 
-The output result from each obtained proxied actuator endpoint includes the ID of each client.
+Beside the reading request domain object `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
+by which you can perform proxied write and delete operations respectively on connected clients. All these request domain objects
+can include operation parameters as needed.
+
+The output result from each obtained proxied actuator endpoint includes the ID of each client. For example, the
+output of the snippet above (for breviy) would look like:
+
+```json
+[
+   {
+      "clientId":1,
+      "actuator":{
+         "status":"UP"
+      }
+   },
+   {
+      "clientId":2,
+      "actuator":{
+         "status":"UP"
+      }
+   }
+]
+```
 
 The client would automatically map routes to exposed actuator endpoints. You can log out and view all mapped routes to actuator 
 endpoints by setting `logging.level.io.agilehandy.actuator.rsocket.client=DEBUG` in your properties file.
@@ -87,12 +109,7 @@ A shell script `./scripts/spring-actuator-rsocket-proxy.sh` is provided to run t
 The proxy would run on port 7002.
 
 ### Work In-Progress
-*   Beside the read `ActuatorReadRequest`, there are also `ActuatorWriteRequest` and `ActuatorDeleteRequest` domain objects 
-by which you can perform proxied write and delete operations respectively on connected clients. All these request domain objects
-can include operation parameters as needed. 
- 
-*   Expanded goal, to blend the proxy as a Kubernetes controller to reconcile changes in configmaps by refreshing the configuration 
-of all instances of a particular microservice.
+*  Write and delete operations. 
 
 
 
