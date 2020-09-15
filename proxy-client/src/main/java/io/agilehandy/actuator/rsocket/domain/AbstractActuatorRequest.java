@@ -26,7 +26,8 @@ import java.util.List;
 public abstract class AbstractActuatorRequest implements Serializable {
 
 	private String route;
-	private String serviceName;
+	private String clientName;
+	private Integer clientId;
 	private OperationType operationType;
 	private List<Parameter> parameters;
 
@@ -40,12 +41,20 @@ public abstract class AbstractActuatorRequest implements Serializable {
 		this.route = route;
 	}
 
-	public String getServiceName() {
-		return serviceName;
+	public String getClientName() {
+		return clientName;
 	}
 
-	protected void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
+	protected void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
+	public Integer getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
 	}
 
 	public OperationType getOperationType() {

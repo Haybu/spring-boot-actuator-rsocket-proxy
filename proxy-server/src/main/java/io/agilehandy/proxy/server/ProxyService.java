@@ -49,14 +49,16 @@ public class ProxyService {
 		this.objectMapper = objectMapper;
 	}
 
-	public void registerClientConnection(String serviceName, RSocketRequester requester) {
-		clientRepository.add(serviceName, requester);
-		log.info("connection of actuator client " + serviceName + " is registered");
+	public boolean registerClientConnection(String clientName, Integer clientId, RSocketRequester requester) {
+		boolean result = clientRepository.add(clientName, clientId, requester);
+		log.info("connection of actuator client " + clientName + " is registered");
+		return result;
 	}
 
-	public void unregisterClientConnection(String serviceName, RSocketRequester requester) {
-		clientRepository.remove(serviceName, requester);
-		log.info("connection of actuator client " + serviceName + " is unregistered");
+	public boolean unregisterClientConnection(String clientName, Integer clientId, RSocketRequester requester) {
+		boolean result = clientRepository.remove(clientName, clientId, requester);
+		log.info("connection of actuator client " + clientName + " is unregistered");
+		return  result;
 	}
 
 	public Mono<String> connectedActuatorRead(final AbstractActuatorRequest request) {
@@ -64,15 +66,16 @@ public class ProxyService {
 		String route = request.getRoute();
 		log.info("actuator route: " + route);
 		String data = this.getData(request);
-		List<RSocketRequester> targets = this.targets(request.getServiceName());
-		return Flux.fromIterable(targets)
-				.flatMap(requester ->
-					requester.route(route)
-						.data(DefaultPayload.create(data))
-						.retrieveMono(Object.class))
-						.map(this::objectToString)
-						.collect(Collectors.joining(",\n"))
-						.map(str -> "[\n " + str + " \n]")
+		List<RSocketClientConnection> connections = this.targetConnections(request.getClientName());
+		return Flux.fromIterable(connections)
+				.flatMap(conn -> conn.getRSocketRequester().route(route)
+								.data(DefaultPayload.create(data))
+								.retrieveMono(Object.class)
+								.map(this::objectToString)
+								.map(str -> this.attachClientId(str, conn.getClientId()))
+				)
+				.collect(Collectors.joining(",\n"))
+				.map(str -> "[\n " + str + " \n]")
 				;
 	}
 
@@ -81,22 +84,24 @@ public class ProxyService {
 		String route = request.getRoute();
 		log.info("actuator route: " + route);
 		String data = this.getData(request);
-		List<RSocketRequester> targets = this.targets(request.getServiceName());
-		return Flux.fromIterable(targets).flatMap(requester ->
-				requester.route(route)
-						.data(DefaultPayload.create(data))
-						.send())
+		List<RSocketClientConnection> connections = this.targetConnections(request.getClientName());
+		return Flux.fromIterable(connections)
+				.map(conn -> conn.getRSocketRequester())
+				.flatMap(requester ->
+						requester.route(route)
+							.data(DefaultPayload.create(data))
+							.send())
 				.then();
 	}
 
-	private List<RSocketRequester> targets(String serviceName) {
-		List<RSocketRequester> targets = null;
-		if (StringUtils.isEmpty(serviceName)) {
+	private List<RSocketClientConnection> targetConnections(String clientName) {
+		List<RSocketClientConnection> targets = null;
+		if (StringUtils.isEmpty(clientName)) {
 			targets = clientRepository.getAll();
 			log.info("targeting actuator of All connected clients. (number of clients: " + targets.size() + ")");
 		} else {
-			targets = clientRepository.connectedClientsByServiceName(serviceName);
-			log.info("targeting actuator of connected service " + serviceName + " (number of clients: " + targets.size() + ")");
+			targets = clientRepository.findAllByClientName(clientName);
+			log.info("targeting actuator of connected service " + clientName + " (number of clients: " + targets.size() + ")");
 		}
 		return targets;
 	}
@@ -115,6 +120,10 @@ public class ProxyService {
 				.map(this::buildParameterString)
 				.collect(Collectors.joining(","));
 		return "[ " + json + " ]";
+	}
+
+	private String attachClientId(String str, Integer clientId) {
+		return "{ \"clientId\": " + clientId + ", \"actuator\": " + str + " }";
 	}
 
 	private String buildParameterString(Parameter parameter) {

@@ -30,18 +30,28 @@ import reactor.netty.tcp.TcpClient;
 @ConfigurationProperties(prefix = "management.rsocket.client")
 public class RSocketActuatorProxyClientProperties {
 
-	private String serviceName;
+	private String clientName;
+
+	private Integer clientId = 1;
 
 	private boolean enabled;
 
 	private final Proxy proxy = new Proxy();
 
-	public String getServiceName() {
-		return serviceName;
+	public String getClientName() {
+		return clientName;
 	}
 
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
+	public void setClientName(String serviceName) {
+		this.clientName = serviceName;
+	}
+
+	public Integer getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
 	}
 
 	public boolean isEnabled() {

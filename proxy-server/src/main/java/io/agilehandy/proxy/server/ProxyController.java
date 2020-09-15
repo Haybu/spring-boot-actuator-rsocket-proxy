@@ -27,6 +27,8 @@ import org.springframework.messaging.rsocket.annotation.ConnectMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 /**
  * @author Haytham Mohamed
  **/
@@ -43,22 +45,32 @@ public class ProxyController {
 	}
 
 	@ConnectMapping("client-connect")
-	public void clientConnect(RSocketRequester requester, @Payload String serviceName) {
-		requester.rsocket()
+	public void clientConnect(RSocketRequester clientRequester, @Payload Map<String, Object> setupData) {
+		clientRequester.rsocket()
 				.onClose()
 				.doFirst(() -> {
-					// Add all new clients to a client list
-					log.info("Client with service name {} is connected.", serviceName);
-					service.registerClientConnection(serviceName, requester);
+					// Add new client to a clients list
+					if (service.registerClientConnection((String)setupData.get("client-name")
+							, (Integer)setupData.get("client-id"), clientRequester)) {
+						log.info("Client with service name {} and client id {} is connected to proxy."
+								, setupData.get("client-name"), setupData.get("client-id"));
+					} else {
+						log.info("Client with service name {} and client id {} is not connected to proxy."
+								, setupData.get("client-name"), setupData.get("client-id"));
+					}
 				})
 				.doOnError(error -> {
 					// Warn when channels are closed by clients
-					log.warn("Channel to client with service name {} is closed.", serviceName);
+					log.warn("Channel to client with service name {} and client id {} is closed."
+							, setupData.get("client-name"), setupData.get("client-id"));
 				})
 				.doFinally(consumer -> {
 					// Remove disconnected clients from the client list
-					service.unregisterClientConnection(serviceName, requester);
-					log.info("Client with service name {} disconnected.", serviceName);
+					if (service.unregisterClientConnection((String)setupData.get("client-name")
+							, (Integer)setupData.get("client-id"), clientRequester)) {
+						log.info("Client with service name {} and client id {} is disconnected from proxy."
+								, setupData.get("client-name"), setupData.get("client-id"));
+					}
 				})
 				.subscribe();
 	}

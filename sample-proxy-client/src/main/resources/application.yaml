@@ -17,7 +17,8 @@ management:
         include: health,info,features
   rsocket:
     client:
-      service-name: ${spring.application.name}
+      client-name: ${spring.application.name}
+      client-id: 4
       endpoints:
         exposure:
           include: ${management.endpoints.web.exposure.include}

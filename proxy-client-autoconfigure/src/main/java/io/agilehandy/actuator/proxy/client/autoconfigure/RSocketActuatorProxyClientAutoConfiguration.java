@@ -35,6 +35,9 @@ import org.springframework.messaging.rsocket.RSocketStrategies;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Haytham Mohamed
  **/
@@ -53,8 +56,12 @@ public class RSocketActuatorProxyClientAutoConfiguration {
 					, RSocketStrategies strategies
 					, RSocketActuatorProxyClientProperties properties) {
 
+		Map<String, Object> setupData = new HashMap<>();
+		setupData.put("client-name", properties.getClientName());
+		setupData.put("client-id", properties.getClientId());
+
 		RSocketRequester.Builder builder = RSocketRequester.builder()
-				.setupData(properties.getServiceName())
+				.setupData(setupData)
 				.setupRoute("client-connect")
 				.rsocketStrategies(strategies)
 				.rsocketConnector(connector -> connector.acceptor(handler.responder()))

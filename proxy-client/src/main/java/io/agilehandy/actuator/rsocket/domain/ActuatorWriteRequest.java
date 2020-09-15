@@ -46,8 +46,13 @@ public class ActuatorWriteRequest extends AbstractActuatorRequest {
 			return this;
 		}
 
-		public Builder withServiceName(String name) {
-			requestToBuild.setServiceName(name);
+		public Builder withClientName(String name) {
+			requestToBuild.setClientName(name);
+			return this;
+		}
+
+		public Builder withClientId(Integer id) {
+			requestToBuild.setClientId(id);
 			return this;
 		}
 
