@@ -70,7 +70,7 @@ by which you can perform proxied write and delete operations respectively on con
 can include operation parameters as needed.
 
 The output result from each obtained proxied actuator endpoint includes the ID of each client. For example, the
-output of the snippet above (for breviy) would look like:
+output of the snippet above (with breviy) would look like:
 
 ```json
 [
