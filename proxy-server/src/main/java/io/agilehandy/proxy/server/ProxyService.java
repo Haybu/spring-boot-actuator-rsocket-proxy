@@ -70,11 +70,10 @@ public class ProxyService {
 				.flatMap(conn -> conn.getRSocketRequester().route(route)
 								.data(DefaultPayload.create(data))
 								.retrieveMono(Object.class)
-								.map(this::objectToString)
-								.map(str -> this.attachClientId(str, conn.getClientId()))
+								.map(obj -> new ActuatorResult(conn.getClientId(), obj))
 				)
-				.collect(Collectors.joining(",\n"))
-				.map(str -> "[\n " + str + " \n]")
+				.collectList()
+				.map(this::objectToString)
 				;
 	}
 
@@ -120,10 +119,6 @@ public class ProxyService {
 				.map(this::buildParameterString)
 				.collect(Collectors.joining(","));
 		return "[ " + json + " ]";
-	}
-
-	private String attachClientId(String str, Integer clientId) {
-		return "{ \"clientId\": " + clientId + ", \"actuator\": " + str + " }";
 	}
 
 	private String buildParameterString(Parameter parameter) {
