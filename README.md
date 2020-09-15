@@ -109,7 +109,8 @@ A shell script `./scripts/spring-actuator-rsocket-proxy.sh` is provided to run t
 The proxy would run on port 7002.
 
 ### Work In-Progress
-*  Write and delete operations. 
+*   Write and delete operations. 
+*   Parameterized operations.
 
 
 
