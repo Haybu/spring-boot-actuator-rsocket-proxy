@@ -18,7 +18,7 @@ management:
   rsocket:
     client:
       client-name: ${spring.application.name}
-      client-id: 1
+      client-id: ${random.int}
       endpoints:
         exposure:
           include: ${management.endpoints.web.exposure.include}
@@ -26,30 +26,4 @@ management:
         host: localhost
         port: 7002
 
----
-spring:
-  profiles: second
-
-management:
-  rsocket:
-    client:
-      client-id: 2
-
----
-spring:
-  profiles: third
-
-management:
-  rsocket:
-    client:
-      client-id: 3
-
----
-spring:
-  profiles: forth
-
-management:
-  rsocket:
-    client:
-      client-id: 4
 
