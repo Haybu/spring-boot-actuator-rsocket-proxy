@@ -61,6 +61,13 @@ public class ProxyService {
 		return  result;
 	}
 
+	public void shutdown() {
+		Flux.fromIterable(this.targetConnections(null))
+				.doOnNext(conn -> conn.getRSocketRequester().rsocket().dispose())
+				.subscribe();
+	}
+
+	// to perform read operation on connected Actuator endpoints
 	public Mono<String> connectedActuatorRead(final AbstractActuatorRequest request) {
 		String route = request.getRoute();
 		log.info("reading actuator from all connected clients with route {}", route);
@@ -77,6 +84,7 @@ public class ProxyService {
 				;
 	}
 
+	// to perform write and delete operations on connected Actuator endpoints
 	public Mono<Void> connectedActuatorUpdate(final AbstractActuatorRequest request) {
 		String route = request.getRoute();
 		log.info("updating actuator of all connected clients with route {}", route);
@@ -118,20 +126,21 @@ public class ProxyService {
 		String json = parameters.stream()
 				.map(this::buildParameterString)
 				.collect(Collectors.joining(","));
-		return "[ " + json + " ]";
+		return "{ " + json + " }";
 	}
 
 	private String buildParameterString(Parameter parameter) {
 		String name = parameter.getName();
 		Class<?> type = parameter.getType();
-		Object value = type.cast(parameter.getValue());
+		//Object value = type.cast(parameter.getValue());
+		Object value = parameter.getValue();
 		String valueStr = "cannot-map-string-error";
 		try {
 			valueStr = objectMapper.writeValueAsString(value);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		return "{ \"" + name + "\": " + valueStr + " }";
+		return "\"" + name + "\": " + valueStr;
 	}
 
 	private String objectToString(Object obj) {

@@ -70,7 +70,7 @@ Beside the reading request domain object `ActuatorReadRequest`, there are also `
 by which you can perform proxied write and delete operations respectively on connected clients. All these request domain objects
 can include operation parameters as needed.
 
-The output result from each obtained proxied actuator endpoint includes the ID of each client. For example, the
+The output result from each obtained proxied actuator endpoint includes each client's name and ID. For example, the
 output of the snippet above (with breviy) would look like:
 
 ```json

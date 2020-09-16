@@ -11,10 +11,13 @@ logging:
     io.agilehandy.actuator.rsocket.client: DEBUG
 
 management:
+  endpoint:
+    loggers:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info,features
+        include: health,info,features,loggers,myloggers
   rsocket:
     client:
       client-name: ${spring.application.name}

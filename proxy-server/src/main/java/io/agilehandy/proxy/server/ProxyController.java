@@ -27,7 +27,7 @@ import org.springframework.messaging.rsocket.annotation.ConnectMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import javax.annotation.PreDestroy;
 import java.util.Map;
 
 /**
@@ -89,6 +89,11 @@ public class ProxyController {
 	@MessageMapping("actuator-delete")
 	public Mono<Void> delete(final ActuatorDeleteRequest request) {
 		return service.connectedActuatorUpdate(request);
+	}
+
+	@PreDestroy
+	void shutdown() {
+		service.shutdown();
 	}
 
 }

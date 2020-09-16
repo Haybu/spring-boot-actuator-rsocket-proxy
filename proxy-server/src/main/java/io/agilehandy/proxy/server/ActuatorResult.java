@@ -15,10 +15,12 @@
  */
 package io.agilehandy.proxy.server;
 
+import java.io.Serializable;
+
 /**
  * @author Haytham Mohamed
  **/
-public class ActuatorResult {
+public class ActuatorResult implements Serializable {
 
 	String clientName;
 	Integer clientId;

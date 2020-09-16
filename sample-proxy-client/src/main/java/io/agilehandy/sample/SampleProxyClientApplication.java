@@ -1,10 +1,10 @@
 package io.agilehandy.sample;
 
-import io.agilehandy.actuator.rsocket.client.ActuatorProxyClient;
-import io.agilehandy.actuator.rsocket.domain.ActuatorReadRequest;
 import io.agilehandy.actuator.rsocket.endpoint.DiscoveredRSocketOperation;
 import io.agilehandy.actuator.rsocket.endpoint.ExposableRSocketEndpoint;
 import io.agilehandy.actuator.rsocket.endpoint.RSocketEndpointsSupplier;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,15 +14,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
+//@EnableScheduling
 public class SampleProxyClientApplication {
+
+	private Log log = LogFactory.getLog(SampleProxyClientApplication.class);
 
 	private final RSocketEndpointsSupplier supplier;
 
-	private final ActuatorProxyClient proxyClient;
-
-	public SampleProxyClientApplication(RSocketEndpointsSupplier supplier, ActuatorProxyClient proxyClient) {
+	public SampleProxyClientApplication(RSocketEndpointsSupplier supplier) {
 		this.supplier = supplier;
-		this.proxyClient = proxyClient;
 	}
 
 	public static void main(String[] args) {
@@ -34,18 +34,16 @@ public class SampleProxyClientApplication {
 		return args -> {
 			//supplier.getEndpoints().stream()
 					//.forEach(this::printEndPoint);
-
-			// use the proxy client to read connected actuator health
-			ActuatorReadRequest readRequest = new ActuatorReadRequest.Builder()
-					.withRoute("actuator.health.read")
-					.build();
-
-			proxyClient.read(readRequest)
-					.doOnNext(System.out::println)
-					.doOnError(err -> System.out.println(err.getCause()))
-					.subscribe();
-
 		};
+	}
+
+	//@Scheduled(fixedDelay = 2000)
+	private void printLogMessage() {
+		log.trace("This is a TRACE level message");
+		log.debug("This is a DEBUG level message");
+		log.info("This is an INFO level message");
+		log.warn("This is a WARN level message");
+		log.error("This is an ERROR level message");
 	}
 
 	private void printEndPoint(ExposableRSocketEndpoint endpoint) {

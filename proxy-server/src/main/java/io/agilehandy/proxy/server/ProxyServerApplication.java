@@ -10,4 +10,17 @@ public class ProxyServerApplication {
 		SpringApplication.run(ProxyServerApplication.class, args);
 	}
 
+	/*@Bean
+	public RSocketStrategies rsocketStrategies() {
+		return  RSocketStrategies.builder()
+				.encoders(encoders -> {
+					encoders.add(new Jackson2CborEncoder());
+					encoders.add(new Jackson2JsonEncoder());
+				})
+				.decoders(decoders -> {
+						decoders.add(new Jackson2CborDecoder());
+						decoders.add(new Jackson2JsonDecoder());
+				})
+				.build();
+	}*/
 }

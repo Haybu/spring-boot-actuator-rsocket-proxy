@@ -15,13 +15,19 @@
  */
 package io.agilehandy.actuator.rsocket.domain;
 
+import java.io.Serializable;
+
 /**
  * @author Haytham Mohamed
  **/
-public class Parameter {
+public class Parameter implements Serializable {
 	private String name;
 	private Object value;
 	private Class<?> type;
+
+	public Parameter() {
+		this(null, null, null);
+	}
 
 	public Parameter(String name, Object value, Class<?> type) {
 		this.name = name;
