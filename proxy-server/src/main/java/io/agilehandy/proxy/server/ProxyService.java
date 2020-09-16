@@ -70,7 +70,7 @@ public class ProxyService {
 				.flatMap(conn -> conn.getRSocketRequester().route(route)
 								.data(DefaultPayload.create(data))
 								.retrieveMono(Object.class)
-								.map(obj -> new ActuatorResult(conn.getClientId(), obj))
+								.map(obj -> new ActuatorResult(conn.getClientName(), conn.getClientId(), obj))
 				)
 				.collectList()
 				.map(this::objectToString)

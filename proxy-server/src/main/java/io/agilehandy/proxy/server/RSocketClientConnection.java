@@ -23,10 +23,12 @@ import org.springframework.messaging.rsocket.RSocketRequester;
 public class RSocketClientConnection {
 
 	private Integer clientId;
+	private String clientName;
 	private RSocketRequester rSocketRequester;
 
-	public RSocketClientConnection(Integer clientId, RSocketRequester requester) {
+	public RSocketClientConnection(String clientName, Integer clientId, RSocketRequester requester) {
 		this.setClientId(clientId);
+		this.setClientName(clientName);
 		this.setRSocketRequester(requester);
 	}
 
@@ -36,6 +38,14 @@ public class RSocketClientConnection {
 
 	public void setClientId(Integer clientId) {
 		this.clientId = clientId;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public RSocketRequester getRSocketRequester() {

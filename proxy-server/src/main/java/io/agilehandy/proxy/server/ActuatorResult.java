@@ -20,12 +20,22 @@ package io.agilehandy.proxy.server;
  **/
 public class ActuatorResult {
 
+	String clientName;
 	Integer clientId;
 	Object actuator;
 
-	public ActuatorResult(Integer clientId, Object actuator) {
+	public ActuatorResult(String clientName, Integer clientId, Object actuator) {
+		this.clientName = clientName;
 		this.clientId = clientId;
 		this.actuator = actuator;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public Integer getClientId() {

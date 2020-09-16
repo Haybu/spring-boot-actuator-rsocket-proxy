@@ -76,12 +76,14 @@ output of the snippet above (with breviy) would look like:
 ```json
 [
    {
+      "clientName":"sample-proxy-client",
       "clientId":1,
       "actuator":{
          "status":"UP"
       }
    },
    {
+      "clientName":"sample-proxy-client",
       "clientId":2,
       "actuator":{
          "status":"UP"

@@ -43,7 +43,7 @@ public class ClientRepository {
 
 	public boolean add(String clientName, Integer clientId, RSocketRequester requester) {
 		if (!connectedClients.containsKey(clientName)) {
-			RSocketClientConnection connection = new RSocketClientConnection(clientId, requester);
+			RSocketClientConnection connection = new RSocketClientConnection(clientName, clientId, requester);
 			List<RSocketClientConnection> list = new ArrayList<>();
 			list.add(connection);
 			connectedClients.put(clientName, list);
@@ -57,7 +57,7 @@ public class ClientRepository {
 				log.info("A proxy connection already exists for client named " + clientName + " with id " + clientId);
 				return false;
 			} else { // add the new connection
-				connections.add(new RSocketClientConnection(clientId, requester));
+				connections.add(new RSocketClientConnection(clientName, clientId, requester));
 			}
 		}
 		return true;
