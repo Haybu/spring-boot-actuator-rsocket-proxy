@@ -55,13 +55,8 @@ public class MyLoggersEndpoint {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		//String data = payload.getDataUtf8();
-		log.info("hitting endpoint with data: " + mapData);
 		String name = mapData.get("name");
 		String configuredLevel = mapData.get("configuredLevel");
-		log.info("name: " + name);
-		log.info("configuredLevel: " + configuredLevel);
-
 		delegate.configureLogLevel(name, LogLevel.valueOf(configuredLevel));
 	}
 }
