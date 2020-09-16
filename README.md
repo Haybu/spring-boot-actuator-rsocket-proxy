@@ -29,6 +29,7 @@ management:
   rsocket:
     client:
       service-name: ${spring.application.name}
+      client-id: 1
       endpoints:
         exposure:
           include: ${management.endpoints.web.exposure.include}
@@ -37,9 +38,9 @@ management:
         port: 7002
 ```
 
-Another client (with a typical setup) can obtain a collection of the health from
-all connected clients or from those of a specific service. To do that you can inject and use 
-the `ActuatorProxyClient` bean as follows:
+Another client with a typical setup (with different `client-id` if has same `service-name`) 
+can obtain a collection of the health from all connected clients or from those of a specific 
+service. To do that you can inject and use the `ActuatorProxyClient` bean as follows:
 
 ```java
 @Component
