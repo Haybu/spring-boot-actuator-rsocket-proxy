@@ -100,8 +100,8 @@ where the baseRoot defaults to `actuator` value.
 
 For example: 
 *   to read a client health the route would look like `actuator.health.read`
-*   to read a client health by path name parameter, the route would look like: `actuator.health.read.name`. The parameter name
-and value would be passed via the request object.
+*   to read a client health by a parameter path `name`, the route would look like: `actuator.health.read.name`. The parameter name
+and value would be passed via a request object.
 
 A sub-module sample `sample-proxy-client` is provided to see a client in action.
 
